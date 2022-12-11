@@ -29,11 +29,23 @@ conf = {'bootstrap.servers': "localhost:9092",
 consumer = Consumer(conf)
 consumer.subscribe(["files_data"])
 
+keep_running = False
+failed_attempts = 0
+
 print("Consumer awaiting for messages in KAFKA queue")
 
 while True:
     msg = consumer.poll(timeout=0.1)
+
     if msg:
+        failed_attempts = 0
         print("\nConsumer fetched message from KAFKA queue")
         process_message(msg)
         print("Consumer awaiting for messages in KAFKA queue")
+
+    else:
+        failed_attempts+=1
+
+    if failed_attempts==100 and not keep_running:
+        print("Consumer failed to fetch messages 100 times in a row and keep_running=False, so exiting Consumer")
+        exit()
