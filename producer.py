@@ -29,7 +29,7 @@ def process_file(filename):
     s3.download_file_to_process(filename)
     
     print(f"Producer processing {filename}")
-    data_json = process_file(filename)
+    data_json = make_json(filename)
 
     print(f"Producer publishing {filename} data json to KAFKA")
     producer.produce('files_data', value=data_json.encode('utf-8'))
